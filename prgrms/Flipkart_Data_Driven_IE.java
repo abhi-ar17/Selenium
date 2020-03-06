@@ -1,9 +1,5 @@
 package prgrms;
 
-import org.testng.annotations.Test;
-
-import org.testng.annotations.DataProvider;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,26 +13,22 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 
+import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.support.ui.Select;
-import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
-import org.testng.annotations.BeforeMethod;
-
-public class Flipkart_Data_Drivern {
+public class Flipkart_Data_Driven_IE {
 	WebDriver driver;
-	int iterations=0;
-	int rows;
 
 	@Test(dataProvider = "testdata")
-
 	public void a_Login(String username, String pass, String search, String fsure, String brand, Integer model,Integer size, String address, String credit, Integer month, Integer year, Integer cvv)
-			throws InterruptedException, IOException {
-
-			iterations++;
-	//	System.out.println(username);
-	//	System.out.println(size);
+			throws InterruptedException {
+		System.out.println(username);
+		System.out.println(size);
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 		Thread.sleep(1000l);
 		driver.findElement(By.xpath("//input[@class='_2zrpKA _1dBPDZ']")).sendKeys(username);
@@ -56,12 +48,12 @@ public class Flipkart_Data_Drivern {
 		List<WebElement> abc = driver.findElements(By.xpath("//*[@class='_1GEhLw']"));
 		for (i = 0; i < abc.size(); i++) {
 
-//			System.out.println("lll" + abc.get(i).getText() + "..............." + brand);
+			System.out.println("lll" + abc.get(i).getText() + "..............." + brand);
 			if (abc.get(i).getText().equalsIgnoreCase(brand)) {
 				break;
 			}
 		}
-	//	System.out.println("......///..." + i);
+		System.out.println("......///..." + i);
 		List<WebElement> model_Shoe = driver.findElements(By.xpath("//*[@class='_1p7h2j']"));
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 		Thread.sleep(2000l);
@@ -125,7 +117,7 @@ public class Flipkart_Data_Drivern {
 		 * driver.findElement(By.xpath("//*[@id=\"to-payment\"]/button")).click(); //
 		 * Thread.sleep(2500l);
 		 */
-		driver.findElements(By.xpath("//*[@class='_6ATDKp']")).get(0).click();
+		driver.findElements(By.xpath("//*[@class='_6ATDKp']")).get(1).click();
   
 		driver.findElement(By.xpath("//input[@class='_16qL6K _366U7Q' and @tabindex='1']")).sendKeys(credit);
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
@@ -141,17 +133,15 @@ public class Flipkart_Data_Drivern {
 		driver.findElement(By.xpath("//input[@class='_16qL6K _366U7Q' and @tabindex='6']")).sendKeys(cv);
 		Thread.sleep(2000l);
 		driver.findElement(By.xpath("//button[@class='_2AkmmA wbv91z _7UHT_c']")).click();
-		Thread.sleep(5000l);
 
-        
-	
-}
+		driver.manage().timeouts().implicitlyWait(50, TimeUnit.SECONDS);
 
+	}
 
-	@BeforeMethod
+	@BeforeTest
 	public void beforeTest() {
-		System.setProperty("webdriver.chrome.driver", "C:\\New folder\\chromedriver_win32\\chromedriver.exe");
-		driver = new ChromeDriver();
+		 System.setProperty("webdriver.ie.driver","C:\\New folder\\IEDriverServer_x64_3.14.0\\IEDriverServer.exe");
+		 driver=new InternetExplorerDriver(); 
 		String baseUrl = "http://google.com";
 		driver.get(baseUrl);
 		WebElement element = driver.findElement(By.name("q"));
@@ -159,34 +149,28 @@ public class Flipkart_Data_Drivern {
 		driver.manage().window().maximize();
 		element.sendKeys(Keys.RETURN);
 		driver.findElement(By.xpath("//*[@id=\"rso\"]/div[1]/div/div/div/div/div[1]/a/h3")).click();
-		
 	}
 
-	@AfterMethod
+	@AfterTest
 	public void afterTest() throws InterruptedException, IOException {
-	//	System.out.println("After Test");
 		TakesScreenshot scrnshot = ((TakesScreenshot) driver);
 		File src = scrnshot.getScreenshotAs(OutputType.FILE);
 		File dest = new File("C:\\Users\\837366\\Desktop\\Screenshot" + System.currentTimeMillis() + ".png");
 		FileUtils.copyFile(src, dest);
-		Thread.sleep(2000l);
-		driver.quit();
-
-		}
+		Thread.sleep(5000l);
+	}
 
 	@DataProvider(name = "testdata")
 	public Object[][] TestDataFeed() {
 		ReadExcel config = new ReadExcel("C:\\Users\\837366\\Desktop\\Flipkart.xlsx");
 
-		 rows = config.getRowCount(0);
+		int rows = config.getRowCount(0);
 
 		Object[][] credentials = new Object[rows][12];
 		for (int instant = 0; instant < rows; instant++) {
-			for(int z=0;z<12;z++)
-			{
 
-			credentials[instant][z] = config.getData(0, instant, z);
-/*			credentials[instant][1] = config.getData(0, instant, 1);
+			credentials[instant][0] = config.getData(0, instant, 0);
+			credentials[instant][1] = config.getData(0, instant, 1);
 			credentials[instant][2] = config.getData(0, instant, 2);
 			credentials[instant][3] = config.getData(0, instant, 3);
 			credentials[instant][4] = config.getData(0, instant, 4);
@@ -197,8 +181,8 @@ public class Flipkart_Data_Drivern {
 			  credentials[instant][8] = config.getData(0, instant, 8);
 			  credentials[instant][9] = config.getData(0, instant, 9);
 			 credentials[instant][10] = config.getData(0, instant, 10);
-			 credentials[instant][11] = config.getData(0, instant, 11);*/
-			}	
+			 credentials[instant][11] = config.getData(0, instant, 11);
+			
 		}
 
 		return credentials;
